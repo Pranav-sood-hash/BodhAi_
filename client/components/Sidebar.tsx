@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Brain, LayoutDashboard, Headphones, BookOpen, Code, LogOut } from 'lucide-react';
+import { Brain, LayoutDashboard, Headphones, BookOpen, Code, LogOut, User } from 'lucide-react';
 
 interface SidebarProps {
   userName: string;
@@ -21,6 +21,7 @@ export default function Sidebar({ userName }: SidebarProps) {
     { path: '/voice', label: 'Voice Assistant', icon: Headphones },
     { path: '/study', label: 'Study Mode', icon: BookOpen },
     { path: '/code', label: 'Code Helper', icon: Code },
+    { path: '/profile', label: '👤 Profile', icon: User },
   ];
 
   return (

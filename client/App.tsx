@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Voice from "./pages/Voice";
 import Study from "./pages/Study";
 import Code from "./pages/Code";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/voice" element={<Voice />} />
           <Route path="/study" element={<Study />} />
           <Route path="/code" element={<Code />} />
+          <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
