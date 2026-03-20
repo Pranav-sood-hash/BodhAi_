@@ -19,16 +19,16 @@ export default function Code() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex overflow-hidden">
       <Sidebar userName={userName} />
 
-      <div className="flex-1 ml-64">
-        <div className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50 px-8 py-6">
+      <div className="flex-1 w-full min-w-0 overflow-auto pl-0 md:pl-20 lg:pl-64">
+        <div className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50 px-4 md:px-6 lg:px-8 py-6">
           <h1 className="text-3xl font-bold text-slate-100">Code Helper</h1>
           <p className="text-slate-400 mt-2">Understand code with detailed line-by-line explanations</p>
         </div>
 
-        <div className="p-8">
+        <div className="p-4 md:p-6 lg:p-8">
           <div className="max-w-4xl mx-auto">
             <CodeHelper />
           </div>

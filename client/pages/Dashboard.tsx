@@ -62,7 +62,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex overflow-hidden">
       {/* Sidebar */}
       {isSidebarOpen && (
         <button
@@ -79,7 +79,7 @@ export default function Dashboard() {
       />
 
       {/* Main Content */}
-      <div className="flex-1 ml-0 md:ml-20 lg:ml-64">
+      <div className="flex-1 w-full min-w-0 overflow-auto pl-0 md:pl-20 lg:pl-64">
         {/* Header */}
         <div className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50 px-4 md:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between gap-4">
@@ -107,7 +107,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content Area */}
-        <div className="p-8">
+        <div className="p-4 md:p-6 lg:p-8">
           {/* Overview Mode */}
           {activeMode === 'overview' && (
             <div className="space-y-8">
