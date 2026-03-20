@@ -4,7 +4,7 @@ import Sidebar from '@/components/Sidebar';
 import VoiceAssistant from '@/components/VoiceAssistant';
 import StudyMode from '@/components/StudyMode';
 import CodeHelper from '@/components/CodeHelper';
-import { Headphones, BookOpen, Code } from 'lucide-react';
+import { Headphones, BookOpen, Code, Menu, X } from 'lucide-react';
 
 type ActiveMode = 'overview' | 'voice' | 'study' | 'code';
 
@@ -12,6 +12,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [activeMode, setActiveMode] = useState<ActiveMode>('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in
@@ -61,15 +62,35 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex overflow-hidden">
       {/* Sidebar */}
-      <Sidebar userName={userName} />
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 z-40 bg-slate-950/70 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      <Sidebar
+        userName={userName}
+        isOpen={isSidebarOpen}
+        onNavigate={() => setIsSidebarOpen(false)}
+      />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64">
+      <div className="flex-1 w-full min-w-0 overflow-auto pl-0 md:pl-20 lg:pl-64">
         {/* Header */}
-        <div className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50 px-8 py-6">
-          <div className="flex items-center justify-between">
+        <div className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50 px-4 md:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              type="button"
+              aria-label="Open sidebar"
+              onClick={() => setIsSidebarOpen((open) => !open)}
+              className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-slate-800/60 border border-slate-700/50 text-slate-200 hover:bg-slate-800 smooth-transition"
+            >
+              {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
             <div>
               <h1 className="text-3xl font-bold text-slate-100">
                 {activeMode === 'overview'
@@ -86,7 +107,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content Area */}
-        <div className="p-8">
+        <div className="p-4 md:p-6 lg:p-8">
           {/* Overview Mode */}
           {activeMode === 'overview' && (
             <div className="space-y-8">
