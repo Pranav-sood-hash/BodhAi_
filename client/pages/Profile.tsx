@@ -104,14 +104,24 @@ export default function Profile() {
               <h1 className="text-3xl font-bold neon-text-gradient mt-2">Profile</h1>
             </div>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-red-500/30 text-red-300 hover:bg-red-500/15 smooth-transition"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                type="button"
+                onClick={() => navigate('/dashboard')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-600/50 text-slate-200 hover:bg-slate-800/60 smooth-transition"
+              >
+                Back to Home
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-red-500/30 text-red-300 hover:bg-red-500/15 smooth-transition"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-[280px_1fr] gap-8">
