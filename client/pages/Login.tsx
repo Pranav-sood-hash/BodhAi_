@@ -132,12 +132,6 @@ export default function Login() {
             </button>
           </p>
 
-          {/* Demo credentials */}
-          <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/30">
-            <p className="text-xs text-slate-400 mb-2">Demo Credentials:</p>
-            <p className="text-xs text-slate-300"><span className="text-purple-400">Email:</span> demo@bodhai.com</p>
-            <p className="text-xs text-slate-300"><span className="text-purple-400">Password:</span> demo123</p>
-          </div>
         </div>
       </div>
     </div>
