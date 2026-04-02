@@ -15,32 +15,65 @@ export default function CodeHelper() {
   const [code, setCode] = useState(DEFAULT_CODE);
   const [explanation, setExplanation] = useState<CodeExplanation | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleExplain = () => {
+  const handleExplain = async () => {
     if (!code.trim()) return;
 
     setLoading(true);
+    setError('');
+    setExplanation(null);
 
-    // Simulate AI code analysis
-    setTimeout(() => {
-      const mockExplanation: CodeExplanation = {
-        lineByLine: [
-          'Line 1: Define a function called "fibonacci" that takes parameter "n"',
-          'Line 2: Base case - if n is 0 or 1, return n immediately',
-          'Line 3: Recursive case - return the sum of fibonacci(n-1) and fibonacci(n-2)',
-          'Line 4: Close the function definition',
-        ],
-        suggestions: [
-          '⚡ Performance: This recursive approach has exponential time complexity. Consider using memoization or iterative approach for better performance.',
-          '💡 Optimization: For large numbers, the iterative approach would be more efficient.',
-          '📝 Documentation: Add JSDoc comments to document parameters and return types.',
-          '✅ Type Safety: Consider using TypeScript for type checking.',
-        ],
-      };
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'user',
+              content: `Analyze and explain this code:\n\`\`\`\n${code}\n\`\`\``,
+            },
+          ],
+          system_prompt: `You are Bodh AI, an expert code educator. Analyze the given code and respond ONLY with a valid JSON object (no markdown, no extra text) in this exact format:
+{
+  "lineByLine": [
+    "Line 1: description of what this line does",
+    "Line 2: description of what this line does"
+  ],
+  "suggestions": [
+    "⚡ Performance tip or improvement suggestion",
+    "💡 Best practice recommendation",
+    "📝 Documentation or readability tip"
+  ]
+}`,
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1024,
+          stream: false,
+        }),
+      });
 
-      setExplanation(mockExplanation);
+      if (!res.ok) throw new Error('Failed to get response');
+
+      const data = await res.json();
+      const text = data.message.trim();
+
+      let parsed: CodeExplanation;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        parsed = {
+          lineByLine: [text],
+          suggestions: ['Review the explanation above for optimization tips.'],
+        };
+      }
+
+      setExplanation(parsed);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -58,6 +91,12 @@ export default function CodeHelper() {
           placeholder="Paste your code here..."
         />
       </div>
+
+      {error && (
+        <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Explain Button */}
       <button
@@ -113,14 +152,14 @@ export default function CodeHelper() {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/70 smooth-transition text-sm font-medium">
+            <button
+              onClick={() => navigator.clipboard.writeText(code)}
+              className="px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/70 smooth-transition text-sm font-medium"
+            >
               Copy Code
             </button>
             <button
-              onClick={() => {
-                setCode(DEFAULT_CODE);
-                setExplanation(null);
-              }}
+              onClick={() => { setCode(DEFAULT_CODE); setExplanation(null); }}
               className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600/40 to-pink-600/40 border border-purple-500/50 text-purple-300 hover:from-purple-600/50 hover:to-pink-600/50 smooth-transition text-sm font-medium"
             >
               Clear & Reset

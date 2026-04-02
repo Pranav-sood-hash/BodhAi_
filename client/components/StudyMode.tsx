@@ -11,24 +11,58 @@ export default function StudyMode() {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState<StudyResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleAsk = (e: React.FormEvent) => {
+  const handleAsk = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
 
     setLoading(true);
+    setError('');
+    setResponse(null);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const mockResponse: StudyResponse = {
-        explanation: `When you ask "${question}", here's the detailed explanation: This concept encompasses several key components that work together to create a comprehensive understanding. The foundation involves understanding the basic principles, which then build upon each other to create more complex ideas.`,
-        example: `For example, consider this practical scenario: If we apply this concept to real-world situations, we can see how it manifests in everyday life. Imagine a scenario where... This demonstrates how the theory translates into practice.`,
-        summary: `In summary, ${question} fundamentally revolves around understanding the interconnected relationships between various elements. The key takeaway is that by grasping these core principles, you'll be able to apply them across different contexts and solve complex problems.`,
-      };
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: question }],
+          system_prompt: `You are Bodh AI, an expert educational assistant. When a student asks a question, respond ONLY with a valid JSON object (no markdown, no extra text) in this exact format:
+{
+  "explanation": "A detailed explanation of the concept in simple terms",
+  "example": "A practical real-world example that illustrates the concept",
+  "summary": "Key takeaways and what to remember"
+}`,
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1024,
+          stream: false,
+        }),
+      });
 
-      setResponse(mockResponse);
+      if (!res.ok) throw new Error('Failed to get response');
+
+      const data = await res.json();
+      const text = data.message.trim();
+
+      // Parse JSON from response
+      let parsed: StudyResponse;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        // If not JSON, use the text as explanation
+        parsed = {
+          explanation: text,
+          example: 'Please ask a follow-up question for a specific example.',
+          summary: 'Review the explanation above for key takeaways.',
+        };
+      }
+
+      setResponse(parsed);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -43,6 +77,11 @@ export default function StudyMode() {
             className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 smooth-transition resize-none h-32"
           />
         </div>
+        {error && (
+          <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-red-200 text-sm">
+            {error}
+          </div>
+        )}
         <button
           type="submit"
           disabled={loading || !question.trim()}
@@ -85,14 +124,16 @@ export default function StudyMode() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/70 smooth-transition text-sm font-medium">
+            <button
+              onClick={() => navigator.clipboard.writeText(
+                `Q: ${question}\n\nExplanation: ${response.explanation}\n\nExample: ${response.example}\n\nSummary: ${response.summary}`
+              )}
+              className="px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/70 smooth-transition text-sm font-medium"
+            >
               Save Notes
             </button>
             <button
-              onClick={() => {
-                setQuestion('');
-                setResponse(null);
-              }}
+              onClick={() => { setQuestion(''); setResponse(null); }}
               className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600/40 to-pink-600/40 border border-purple-500/50 text-purple-300 hover:from-purple-600/50 hover:to-pink-600/50 smooth-transition text-sm font-medium"
             >
               Ask Another
