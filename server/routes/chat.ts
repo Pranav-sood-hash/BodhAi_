@@ -6,6 +6,7 @@ interface ChatRequest {
   model: string;
   max_tokens: number;
   stream: boolean;
+  apiKey?: string;
 }
 
 interface ChatResponse {
@@ -14,11 +15,12 @@ interface ChatResponse {
 
 export const handleChat: RequestHandler = async (req, res) => {
   try {
-    const { messages, system_prompt, model, max_tokens } = req.body as ChatRequest;
+    const { messages, system_prompt, model, max_tokens, apiKey: clientApiKey } = req.body as ChatRequest;
 
-    const apiKey = process.env.GROQ_API_KEY;
+    // Accept API key from client or fallback to environment variable
+    const apiKey = clientApiKey || process.env.GROQ_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: "GROQ_API_KEY not configured" });
+      return res.status(500).json({ error: "GROQ_API_KEY not configured. Please set your API key in Settings." });
     }
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {

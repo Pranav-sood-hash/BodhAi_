@@ -35,6 +35,13 @@ export default function VoiceAssistant() {
     setError('');
 
     try {
+      const apiKey = localStorage.getItem('groqApiKey');
+      if (!apiKey) {
+        setError('Please configure your Groq API key in Settings first.');
+        setStatus('idle');
+        return;
+      }
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,6 +52,7 @@ export default function VoiceAssistant() {
           model: 'llama-3.3-70b-versatile',
           max_tokens: 256,
           stream: false,
+          apiKey,
         }),
       });
 
