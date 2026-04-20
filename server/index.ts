@@ -2,10 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-<<<<<<< HEAD
-=======
 import { handleChat } from "./routes/chat";
->>>>>>> a74cf820ae5ec21ec0232e8d3bd8dd86dbd34832
 
 export function createServer() {
   const app = express();
@@ -22,10 +19,7 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
-<<<<<<< HEAD
-=======
   app.post("/api/chat", handleChat);
->>>>>>> a74cf820ae5ec21ec0232e8d3bd8dd86dbd34832
 
   return app;
 }

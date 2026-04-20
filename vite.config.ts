@@ -12,12 +12,10 @@ export default defineConfig(({ mode }) => ({
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**"],
     },
     proxy: {
-      // Forward all /api/* requests to the Python FastAPI backend
+      // Forward API requests to the Express backend
       "/api": {
-        target: "http://localhost:8000",
+        target: "http://localhost:3000",
         changeOrigin: true,
-        // Uncomment the line below if your FastAPI routes do NOT include /api prefix
-        // rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

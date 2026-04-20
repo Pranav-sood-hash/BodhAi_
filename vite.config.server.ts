@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
 import path from "path";
 
-// Server build configuration
+// Server build configuration for self-hosted deployments
+// Note: For Vercel serverless, the api/index.ts handler is used directly
 export default defineConfig({
   build: {
     lib: {
@@ -12,7 +13,6 @@ export default defineConfig({
     },
     outDir: "dist/server",
     target: "node22",
-    ssr: true,
     rollupOptions: {
       external: [
         // Node.js built-ins
@@ -32,6 +32,7 @@ export default defineConfig({
         // External dependencies that should not be bundled
         "express",
         "cors",
+        "serverless-http",
       ],
       output: {
         format: "es",
