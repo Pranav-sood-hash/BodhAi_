@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm build",
+  "buildCommand": "npm run build",
   "framework": "vite",
   "outputDirectory": "dist/spa",
   "env": {
@@ -7,7 +7,7 @@
   },
   "functions": {
     "api/index.ts": {
-      "runtime": "nodejs20.x"
+      "maxDuration": 30
     }
   },
   "rewrites": [
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "source": "/dist/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
