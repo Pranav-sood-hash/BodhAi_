@@ -25,6 +25,13 @@ export default function CodeHelper() {
     setExplanation(null);
 
     try {
+      const apiKey = localStorage.getItem('groqApiKey');
+      if (!apiKey) {
+        setError('Please configure your Groq API key in Settings first.');
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,6 +57,7 @@ export default function CodeHelper() {
           model: 'llama-3.3-70b-versatile',
           max_tokens: 1024,
           stream: false,
+          apiKey,
         }),
       });
 
