@@ -25,12 +25,8 @@ export default function CodeHelper() {
     setExplanation(null);
 
     try {
+      // Use localStorage API key if available, otherwise server will use environment variable
       const apiKey = localStorage.getItem('groqApiKey');
-      if (!apiKey) {
-        setError('Please configure your Groq API key in Settings first.');
-        setLoading(false);
-        return;
-      }
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -57,11 +53,14 @@ export default function CodeHelper() {
           model: 'llama-3.3-70b-versatile',
           max_tokens: 1024,
           stream: false,
-          apiKey,
+          ...(apiKey && { apiKey }),
         }),
       });
 
-      if (!res.ok) throw new Error('Failed to get response');
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to get response');
+      }
 
       const data = await res.json();
       const text = data.message.trim();
