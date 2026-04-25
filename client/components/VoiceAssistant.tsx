@@ -35,12 +35,8 @@ export default function VoiceAssistant() {
     setError('');
 
     try {
+      // Use localStorage API key if available, otherwise server will use environment variable
       const apiKey = localStorage.getItem('groqApiKey');
-      if (!apiKey) {
-        setError('Please configure your Groq API key in Settings first.');
-        setStatus('idle');
-        return;
-      }
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -52,11 +48,14 @@ export default function VoiceAssistant() {
           model: 'llama-3.3-70b-versatile',
           max_tokens: 256,
           stream: false,
-          apiKey,
+          ...(apiKey && { apiKey }),
         }),
       });
 
-      if (!res.ok) throw new Error('Failed to get AI response');
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to get AI response');
+      }
 
       const data = await res.json();
       const aiText = data.message;
