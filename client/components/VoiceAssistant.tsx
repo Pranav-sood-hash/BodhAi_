@@ -107,7 +107,7 @@ export default function VoiceAssistant() {
     };
 
     recognition.onend = () => {
-      if (status === 'listening') setStatus('idle');
+      setStatus((currentStatus) => (currentStatus === 'listening' ? 'idle' : currentStatus));
     };
 
     recognition.start();
